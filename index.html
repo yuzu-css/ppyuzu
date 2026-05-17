@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프사-만들어주는 유즈</title>
+<link rel="icon" href="image/yuzu.png" type="image/png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="light">
+
+<button id="theme-toggle" title="테마 전환">
+  <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="5"></circle>
+    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+  </svg>
+</button>
+
+<div class="app">
+
+  <!-- 1열: 편집 패널 -->
+  <div class="panel panel-left">
+    <div class="panel-tabs">
+      <button class="ptab active" data-panel="svg">SVG</button>
+      <button class="ptab" data-panel="text">텍스트</button>
+      <button class="ptab" data-panel="bg">배경</button>
+    </div>
+
+    <!-- SVG 탭 -->
+    <div class="panel-body" id="section-svg">
+      <div class="control-group">
+        <label class="label-sm">SVG 프리셋</label>
+        <div class="svg-preset-grid" id="svg-preset-grid"></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">내 SVG 추가</label>
+        <div class="custom-svg-area">
+          <textarea id="svg-input" placeholder="SVG 코드를 붙여넣으세요"></textarea>
+          <button class="btn-add-svg" id="btn-add-svg">+ 프리셋에 추가</button>
+        </div>
+        <div class="svg-custom-grid" id="svg-custom-grid" style="display:none"></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">가로 위치</label>
+        <div class="range-row"><input type="range" id="svg-x" min="-100" max="100" value="0" step="1"><span class="rv" id="svg-x-value">0px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">세로 위치</label>
+        <div class="range-row"><input type="range" id="svg-y" min="-100" max="100" value="0" step="1"><span class="rv" id="svg-y-value">0px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">크기</label>
+        <div class="range-row"><input type="range" id="svg-size" min="0" max="220" value="16" step="2"><span class="rv" id="svg-size-value">16px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">회전</label>
+        <div class="range-row"><input type="range" id="svg-rotation" min="-180" max="180" value="0" step="5"><span class="rv" id="svg-rotation-value">0°</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">선 두께</label>
+        <div class="range-row"><input type="range" id="svg-stroke-width" min="0.5" max="4" value="2" step="0.1"><span class="rv" id="svg-stroke-width-value">2px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">SVG 색상</label>
+        <div class="cpicker"><input type="color" id="svg-color" value="#FFFFFF"></div>
+      </div>
+      <div class="checkbox-card">
+        <label class="checkbox-label"><input type="checkbox" id="svg-effect-toggle"> SVG 효과</label>
+        <div class="sub-controls" id="svg-effect-sub">
+          <div class="effect-btns">
+            <button class="effect-btn active" data-effect="glow">글로우</button>
+            <button class="effect-btn" data-effect="shadow">그림자</button>
+            <button class="effect-btn" data-effect="neon">네온</button>
+            <button class="effect-btn" data-effect="outline">외곽선</button>
+            <button class="effect-btn" data-effect="blur">블러</button>
+          </div>
+          <div class="range-row mt-sm"><span class="sub-label">강도</span><input type="range" id="svg-effect-width" min="1" max="15" value="4" step="1"><span class="rv" id="svg-effect-width-value">4px</span></div>
+          <div class="color-row mt-sm"><span class="sub-label">색상</span><div class="cpicker"><input type="color" id="svg-effect-color" value="#ffffff"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 텍스트 탭 -->
+    <div class="panel-body" id="section-text" style="display:none">
+      <div class="control-group">
+        <label class="label-sm">텍스트</label>
+        <textarea id="text-input" placeholder="텍스트를 입력하세요"></textarea>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">가로 위치</label>
+        <div class="range-row"><input type="range" id="text-x" min="-100" max="100" value="0" step="1"><span class="rv" id="text-x-value">0px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">세로 위치</label>
+        <div class="range-row"><input type="range" id="text-y" min="-100" max="100" value="0" step="1"><span class="rv" id="text-y-value">0px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">크기</label>
+        <div class="range-row"><input type="range" id="text-size" min="8" max="80" value="24" step="1"><span class="rv" id="text-size-value">24px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">회전</label>
+        <div class="range-row"><input type="range" id="text-rotation" min="-180" max="180" value="0" step="5"><span class="rv" id="text-rotation-value">0°</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">자간</label>
+        <div class="range-row"><input type="range" id="text-spacing" min="-5" max="20" value="0" step="0.5"><span class="rv" id="text-spacing-value">0px</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">행간</label>
+        <div class="range-row"><input type="range" id="text-line-height" min="0.5" max="3" value="1.2" step="0.1"><span class="rv" id="text-line-height-value">1.2</span></div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">폰트</label>
+        <div class="font-select">
+          <div class="font-selected">프리텐다드</div>
+          <div class="font-options">
+            <div class="font-option" data-font="Pretendard-Regular">프리텐다드 Pretendard</div>
+            <div class="font-option" data-font="notosanskr">본고딕 Noto Sans</div>
+            <div class="font-option" data-font="NotoSerifKR">본명조 Source Han Serif</div>
+            <div class="font-option" data-font="DOSGothic">도스고딕 DOSGothic</div>
+            <div class="font-option" data-font="DOSMyungjo">도스명조 DOSMyungjo</div>
+            <div class="font-option" data-font="RIDIBatang">리디바탕 RIDIBatang</div>
+            <div class="font-option" data-font="SBAggroB">어그로체 SBAggroB</div>
+            <div class="font-option" data-font="PyeongchangPeace">평창평화체 PyeongchangPeace</div>
+            <div class="font-option" data-font="Shilla">신라문화체 Shilla</div>
+            <div class="font-option" data-font="KerisKeduLine">케리스 케듀체 Line</div>
+          </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">정렬</label>
+        <div class="btn-group">
+          <button class="align-btn" data-align="left"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 12H3"/><path d="M17 18H3"/><path d="M21 6H3"/></svg></button>
+          <button class="align-btn active" data-align="center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M17 12H7"/><path d="M19 18H5"/><path d="M21 6H3"/></svg></button>
+          <button class="align-btn" data-align="right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 12H9"/><path d="M21 18H7"/><path d="M21 6H3"/></svg></button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="label-sm">텍스트 색상</label>
+        <div class="cpicker"><input type="color" id="text-color" value="#FFFFFF"></div>
+      </div>
+      <div class="checkbox-card">
+        <label class="checkbox-label"><input type="checkbox" id="text-effect-toggle"> 텍스트 효과</label>
+        <div class="sub-controls" id="text-effect-sub">
+          <div class="effect-btns">
+            <button class="effect-btn active" data-effect="glow">글로우</button>
+            <button class="effect-btn" data-effect="stroke">외곽선</button>
+            <button class="effect-btn" data-effect="shadow">그림자</button>
+            <button class="effect-btn" data-effect="neon">네온</button>
+            <button class="effect-btn" data-effect="emboss">엠보스</button>
+            <button class="effect-btn" data-effect="retro">레트로</button>
+          </div>
+          <div class="range-row mt-sm"><span class="sub-label">강도</span><input type="range" id="text-effect-width" min="1" max="15" value="4" step="1"><span class="rv" id="text-effect-width-value">4px</span></div>
+          <div class="color-row mt-sm"><span class="sub-label">색상</span><div class="cpicker"><input type="color" id="text-effect-color" value="#000000"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 배경 탭 -->
+    <div class="panel-body" id="section-bg" style="display:none">
+      <div class="control-group">
+        <label class="label-sm">배경 이미지</label>
+        <div class="bg-actions">
+          <label class="btn-upload">
+            📁 이미지 추가
+            <input type="file" id="bg-image-input" accept="image/*" style="display:none">
+          </label>
+          <button class="btn-sm-danger" id="bg-clear-btn">제거</button>
+        </div>
+        <div class="bg-slot-grid" id="bg-slot-grid"></div>
+        <div id="bg-controls-wrap" style="display:none">
+          <div class="control-group">
+            <label class="label-sm">투명도</label>
+            <div class="range-row"><input type="range" id="bg-opacity" min="0" max="1" value="1" step="0.05"><span class="rv" id="bg-opacity-value">100%</span></div>
+          </div>
+          <div class="control-group">
+            <label class="label-sm">크기</label>
+            <div class="range-row"><input type="range" id="bg-scale" min="50" max="300" value="100" step="5"><span class="rv" id="bg-scale-value">100%</span></div>
+          </div>
+          <!-- 배경 이미지 가로/세로 위치 슬라이더 -->
+          <div class="control-group">
+            <label class="label-sm">가로 위치</label>
+            <div class="range-row"><input type="range" id="bg-pos-x" min="-200" max="200" value="0" step="1"><span class="rv" id="bg-pos-x-value">0px</span></div>
+          </div>
+          <div class="control-group">
+            <label class="label-sm">세로 위치</label>
+            <div class="range-row"><input type="range" id="bg-pos-y" min="-200" max="200" value="0" step="1"><span class="rv" id="bg-pos-y-value">0px</span></div>
+          </div>
+          <div class="control-group">
+            <label class="label-sm">회전</label>
+            <div class="range-row"><input type="range" id="bg-img-rotation" min="-180" max="180" value="0" step="5"><span class="rv" id="bg-img-rotation-value">0°</span></div>
+          </div>
+        </div>
+        <p class="hint-text">💡 이미지를 드래그해서 위치를 조절할 수 있어요</p>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      Preset icons provided by <a href="https://lucide.dev/" target="_blank">Lucide</a> (ISC License)
+    </div>
+  </div>
+
+  <!-- 2열: 프리뷰 -->
+  <div class="panel panel-center">
+    <!-- 액션바 1행+2행 합치기 (구분선은 유지) -->
+    <div class="action-bar action-bar-combined">
+      <div class="abar-row">
+        <button class="abar-btn layout-btn" id="preset-a-btn" title="레이아웃 A — 원형, SVG 위 텍스트 아래">A</button>
+        <button class="abar-btn layout-btn" id="preset-b-btn" title="레이아웃 B — 폴더 모양">B</button>
+        <button class="abar-btn layout-btn" id="preset-c-btn" title="레이아웃 C — 둥근 사각, 텍스트 중앙">C</button>
+        <button class="abar-btn layout-btn" id="preset-d-btn" title="레이아웃 D — 사각형, SVG 우상단 텍스트 좌하단">D</button>
+        <div class="abar-divider"></div>
+        <button class="abar-btn" id="reset-btn" title="기본값으로 초기화">↺ 초기화</button>
+        <div class="abar-divider"></div>
+        <button class="abar-btn" id="undo-btn" title="실행 취소 (Ctrl+Z)">↩ 취소</button>
+        <button class="abar-btn" id="redo-btn" title="다시 실행 (Ctrl+Y)">↪ 다시</button>
+        <div class="abar-divider"></div>
+        <button class="abar-btn" id="save-preset-btn" title="현재 설정을 프리셋으로 저장">💾 프리셋 저장</button>
+        <button class="abar-btn" id="load-preset-btn" title="저장된 프리셋 불러오기">📂 프리셋 불러오기</button>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div id="preview">
+        <div id="bg-image-layer"><img id="bg-image" draggable="false" alt=""></div>
+        <div id="svg-element"></div>
+        <div id="text-element"></div>
+      </div>
+      <div class="grid-overlay" id="grid-overlay"></div>
+    </div>
+
+    <div class="preview-actions">
+      <button class="pact-btn" id="layer-toggle-btn" title="레이어 순서 전환">레이어 ↕ <span id="layer-label">SVG위</span></button>
+      <button class="pact-btn" id="grid-btn">그리드</button>
+      <!-- 덮어쓰기 버튼 추가 -->
+      <button class="pact-btn" id="overwrite-mode-btn" title="슬롯 덮어쓰기">✏️ 덮어쓰기</button>
+      <button class="pact-btn accent" id="add-slot-btn">+ 슬롯 추가</button>
+      <button class="pact-btn accent" id="save-png-btn" title="PNG로 저장 (200px)">💾 저장</button>
+    </div>
+
+    <div class="slot-album" id="slot-album" style="display:none">
+      <div class="slot-header">
+        <span class="slot-title">🖼️ 슬롯 앨범</span>
+        <div style="display:flex;gap:.4rem">
+          <button class="slot-dl-all-btn" id="slot-dl-all-btn">⬇ 전체 저장</button>
+          <button class="slot-clear-btn" id="slot-clear-btn">전체 삭제</button>
+        </div>
+      </div>
+      <!-- 덮어쓰기 안내바 -->
+      <div class="slot-overwrite-bar" id="slot-overwrite-bar" style="display:none">
+        <span class="slot-ow-hint">✏️ 덮어쓸 슬롯을 클릭하세요</span>
+        <button class="slot-ow-cancel" id="slot-ow-cancel">취소</button>
+      </div>
+      <div class="slot-grid" id="slot-grid"></div>
+    </div>
+  </div>
+
+  <!-- 3열: 오른쪽 패널 -->
+  <div class="panel panel-right">
+    <div class="right-section">
+      <div class="right-title">모양</div>
+      <div class="shape-grid" id="shape-grid">
+        <button class="shape-btn active" data-shape="circle">
+          <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="currentColor"/></svg>
+          <span>원</span>
+        </button>
+        <button class="shape-btn" data-shape="square">
+          <svg viewBox="0 0 40 40"><rect x="2" y="2" width="36" height="36" rx="2" fill="currentColor"/></svg>
+          <span>사각</span>
+        </button>
+        <button class="shape-btn" data-shape="rounded">
+          <svg viewBox="0 0 40 40"><rect x="2" y="2" width="36" height="36" rx="10" fill="currentColor"/></svg>
+          <span>둥근</span>
+        </button>
+        <button class="shape-btn" data-shape="folder">
+          <svg viewBox="0 0 40 40"><path d="M2 13 Q2 10 5 10 L16 10 L19 6 Q20 4 22 4 L35 4 Q38 4 38 7 L38 35 Q38 38 35 38 L5 38 Q2 38 2 35 Z" fill="currentColor"/></svg>
+          <span>폴더</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <div class="right-title">배경 색상</div>
+
+      <div class="bg-type-toggle">
+        <button class="bg-type-btn active" id="bg-type-solid" data-type="solid">단색</button>
+        <button class="bg-type-btn" id="bg-type-gradient" data-type="gradient">그라데이션</button>
+      </div>
+
+      <!-- 단색 영역 -->
+      <div id="solid-color-area">
+        <div class="solid-color-row">
+          <div class="cpicker"><input type="color" id="solid-color" value="#6467F2"></div>
+          <span class="grad-color-label">배경 단색</span>
+        </div>
+        <div class="palette-title" style="margin-top:.5rem">단색 프리셋</div>
+        <div class="solid-presets" id="solid-presets-grid">
+          <div class="sp" style="background:#FFDDE1" data-c="#FFDDE1" title="벚꽃 핑크"></div>
+          <div class="sp" style="background:#FFB7C5" data-c="#FFB7C5" title="핑크 로즈"></div>
+          <div class="sp" style="background:#FDD5B1" data-c="#FDD5B1" title="피치"></div>
+          <div class="sp" style="background:#FCE4EC" data-c="#FCE4EC" title="로즈쿼츠"></div>
+          <div class="sp" style="background:#A8EDEA" data-c="#A8EDEA" title="아쿠아"></div>
+          <div class="sp" style="background:#0072FF" data-c="#0072FF" title="오션 블루"></div>
+          <div class="sp" style="background:#000851" data-c="#000851" title="딥 씨"></div>
+          <div class="sp" style="background:#89F7FE" data-c="#89F7FE" title="스카이"></div>
+          <div class="sp" style="background:#B7F8DB" data-c="#B7F8DB" title="민트"></div>
+          <div class="sp" style="background:#A8FF78" data-c="#A8FF78" title="라임"></div>
+          <div class="sp" style="background:#D4FC79" data-c="#D4FC79" title="그린 리프"></div>
+          <div class="sp" style="background:#C2E59C" data-c="#C2E59C" title="새벽 풀숲"></div>
+          <div class="sp" style="background:#DA22FF" data-c="#DA22FF" title="퍼플"></div>
+          <div class="sp" style="background:#F953C6" data-c="#F953C6" title="핫 핑크"></div>
+          <div class="sp" style="background:#7F00FF" data-c="#7F00FF" title="갤럭시"></div>
+          <div class="sp" style="background:#FF6CAB" data-c="#FF6CAB" title="코랄"></div>
+          <div class="sp" style="background:#F7971E" data-c="#F7971E" title="선셋 골드"></div>
+          <div class="sp" style="background:#FF416C" data-c="#FF416C" title="레드"></div>
+          <div class="sp" style="background:#FC354C" data-c="#FC354C" title="레트로 팝"></div>
+          <div class="sp" style="background:#F8C471" data-c="#F8C471" title="버터크림"></div>
+          <div class="sp" style="background:#141E30" data-c="#141E30" title="미드나잇"></div>
+          <div class="sp" style="background:#0F0C29" data-c="#0F0C29" title="딥 나이트"></div>
+          <div class="sp" style="background:#1F1C2C" data-c="#1F1C2C" title="다크 퍼플"></div>
+          <div class="sp" style="background:#232526" data-c="#232526" title="차콜"></div>
+        </div>
+        <!-- 사용자 단색 추가 -->
+        <div class="preset-add-row" style="margin-top:.4rem">
+          <button class="preset-add-btn" id="solid-preset-add-btn" style="flex:1">+ 추가</button>
+        </div>
+        <div class="solid-presets custom-sp-grid" id="custom-solid-presets" style="display:none"></div>
+      </div>
+
+      <!-- 그라데이션 영역 -->
+      <div id="gradient-color-area" style="display:none">
+        <div class="gradient-colors-row">
+          <div class="grad-color-item">
+            <span class="grad-color-label">시작</span>
+            <div class="cpicker"><input type="color" id="gradient-start-color" value="#6467F2"></div>
+          </div>
+          <div class="grad-arrow">→</div>
+          <div class="grad-color-item">
+            <span class="grad-color-label">끝</span>
+            <div class="cpicker"><input type="color" id="gradient-end-color" value="#E0E7FF"></div>
+          </div>
+        </div>
+        <div class="grad-angle-row">
+          <span class="grad-angle-label">각도</span>
+          <input type="range" id="gradient-angle" min="0" max="360" value="45" step="15">
+          <span class="rv grad-angle-val" id="gradient-angle-value">45°</span>
+        </div>
+      </div>
+
+      <!-- 그라데이션 프리셋 -->
+      <div id="gradient-presets-area">
+        <div class="palette-title" style="margin-top:.5rem">그라데이션 프리셋</div>
+        <div class="gradient-presets" id="gradient-presets-grid">
+          <div class="gp" style="background:linear-gradient(45deg,#FFDDE1,#EE9CA7)" data-s="#FFDDE1" data-e="#EE9CA7" title="벚꽃"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FFB7C5,#FF6B9D)" data-s="#FFB7C5" data-e="#FF6B9D" title="핑크 로즈"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FDD5B1,#F8A978)" data-s="#FDD5B1" data-e="#F8A978" title="피치"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FCE4EC,#C48B9F)" data-s="#FCE4EC" data-e="#C48B9F" title="로즈쿼츠"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#A8EDEA,#00B4DB)" data-s="#A8EDEA" data-e="#00B4DB" title="아쿠아"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#0072FF,#00C6FF)" data-s="#0072FF" data-e="#00C6FF" title="오션 블루"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#1CB5E0,#000851)" data-s="#1CB5E0" data-e="#000851" title="딥 씨"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#89F7FE,#66A6FF)" data-s="#89F7FE" data-e="#66A6FF" title="스카이"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#B7F8DB,#50A7C2)" data-s="#B7F8DB" data-e="#50A7C2" title="민트 오션"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#A8FF78,#78FF44)" data-s="#A8FF78" data-e="#78FF44" title="라임"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#D4FC79,#96E6A1)" data-s="#D4FC79" data-e="#96E6A1" title="그린 리프"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#C2E59C,#64B3F4)" data-s="#C2E59C" data-e="#64B3F4" title="새벽 풀숲"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#DA22FF,#9733EE)" data-s="#DA22FF" data-e="#9733EE" title="퍼플 매직"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#F953C6,#B91D73)" data-s="#F953C6" data-e="#B91D73" title="핫 핑크"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#7F00FF,#E100FF)" data-s="#7F00FF" data-e="#E100FF" title="갤럭시"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FF6CAB,#7366FF)" data-s="#FF6CAB" data-e="#7366FF" title="코랄 바이올렛"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#F7971E,#FFD200)" data-s="#F7971E" data-e="#FFD200" title="선셋 골드"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FF416C,#FF4B2B)" data-s="#FF416C" data-e="#FF4B2B" title="레드 오렌지"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#FC354C,#0ABFBC)" data-s="#FC354C" data-e="#0ABFBC" title="레트로 팝"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#F8C471,#F0E68C)" data-s="#F8C471" data-e="#F0E68C" title="버터 크림"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#141E30,#243B55)" data-s="#141E30" data-e="#243B55" title="미드나잇"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#0F0C29,#302B63)" data-s="#0F0C29" data-e="#302B63" title="딥 나이트"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#1F1C2C,#928DAB)" data-s="#1F1C2C" data-e="#928DAB" title="다크 퍼플"></div>
+          <div class="gp" style="background:linear-gradient(45deg,#232526,#414345)" data-s="#232526" data-e="#414345" title="차콜"></div>
+        </div>
+        <!-- 사용자 그라데이션 추가 -->
+        <div class="preset-add-row" style="margin-top:.4rem">
+          <button class="preset-add-btn" id="grad-preset-add-btn" style="flex:1">+ 추가</button>
+        </div>
+        <div class="gradient-presets custom-gp-grid" id="custom-gradient-presets" style="display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 프리셋 모달 -->
+<div class="modal-overlay" id="preset-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">프리셋</div>
+    <div class="preset-slots" id="preset-slots"></div>
+    <button class="modal-close" id="modal-close">닫기</button>
+  </div>
+</div>
+
+<!-- 전체 삭제 확인 다이얼로그 -->
+<div class="modal-overlay" id="confirm-modal" style="display:none">
+  <div class="modal confirm-modal-inner">
+    <div class="confirm-icon">🗑️</div>
+    <div class="modal-title" style="text-align:center">슬롯 전체 삭제</div>
+    <p class="confirm-desc">슬롯 앨범의 모든 이미지가 삭제됩니다.<br>이 작업은 되돌릴 수 없어요.</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" id="confirm-cancel">취소</button>
+      <button class="confirm-ok" id="confirm-ok">삭제</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
